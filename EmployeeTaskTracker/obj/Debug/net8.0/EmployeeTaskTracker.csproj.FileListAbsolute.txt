@@ -194,3 +194,4 @@ C:\Users\10834198\OneDrive - LTIMindtree\Desktop\Demo-project\EmployeeTaskTracke
 C:\Users\10834198\OneDrive - LTIMindtree\Desktop\Demo-project\EmployeeTaskTracker\obj\Debug\net8.0\EmployeeTaskTracker.genruntimeconfig.cache
 C:\Users\10834198\OneDrive - LTIMindtree\Desktop\Demo-project\EmployeeTaskTracker\obj\Debug\net8.0\ref\EmployeeTaskTracker.dll
 C:\Users\10834198\OneDrive - LTIMindtree\Desktop\Demo-project\EmployeeTaskTracker\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\10834198\OneDrive - LTIMindtree\Desktop\Demo-project\EmployeeTaskTracker\obj\Debug\net8.0\EmployeeTaskTracker.sourcelink.json

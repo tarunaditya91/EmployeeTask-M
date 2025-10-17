@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeTaskTracker.Migrations
 {
     [DbContext(typeof(ApplicationDBcontext))]
-    [Migration("20251016110544_AddPasswordColumn")]
-    partial class AddPasswordColumn
+    [Migration("20251017095718_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,7 +37,10 @@ namespace EmployeeTaskTracker.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Password")
+                    b.Property<int?>("ManagerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -48,35 +51,6 @@ namespace EmployeeTaskTracker.Migrations
                     b.HasKey("EmployeeId");
 
                     b.ToTable("Employees");
-
-                    b.HasData(
-                        new
-                        {
-                            EmployeeId = 1,
-                            DateOfJoining = new DateTime(2025, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Designation = "Manager",
-                            FullName = "manager1",
-                            Password = "AQAAAAEAACcQAAAAEJz9k3v9+u5uT1r6zjvYJpQh5rJ8k1vQ==",
-                            Role = "Manager"
-                        },
-                        new
-                        {
-                            EmployeeId = 2,
-                            DateOfJoining = new DateTime(2025, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Designation = "Developer",
-                            FullName = "employee1",
-                            Password = "AQAAAAEAACcQAAAAEJz9k3v9+u5uT1r6zjvYJpQh5rJ8k1vQ==",
-                            Role = "Employee"
-                        },
-                        new
-                        {
-                            EmployeeId = 3,
-                            DateOfJoining = new DateTime(2025, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Designation = "Tester",
-                            FullName = "employee2",
-                            Password = "AQAAAAEAACcQAAAAEJz9k3v9+u5uT1r6zjvYJpQh5rJ8k1vQ==",
-                            Role = "Employee"
-                        });
                 });
 
             modelBuilder.Entity("EmployeeTaskTracker.Models.TaskItem", b =>

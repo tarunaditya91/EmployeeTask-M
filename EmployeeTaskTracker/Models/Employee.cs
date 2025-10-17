@@ -11,7 +11,9 @@ namespace EmployeeTaskTracker.Models
 
         public string Role { get; set; } // "Manager" or "Employee"
 
-        public string Password { get; set; }
+        public string PasswordHash { get; set; }
+
+        public int? ManagerId { get; set; }
 
         [JsonIgnore]
         public ICollection<TaskItem>? TaskItems { get; set; }

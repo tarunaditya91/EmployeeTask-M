@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace EmployeeTaskTracker.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPasswordColumn : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,7 +21,8 @@ namespace EmployeeTaskTracker.Migrations
                     Designation = table.Column<string>(type: "TEXT", nullable: false),
                     DateOfJoining = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Role = table.Column<string>(type: "TEXT", nullable: false),
-                    Password = table.Column<string>(type: "TEXT", nullable: false)
+                    PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
+                    ManagerId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -52,16 +51,6 @@ namespace EmployeeTaskTracker.Migrations
                         principalTable: "Employees",
                         principalColumn: "EmployeeId",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Employees",
-                columns: new[] { "EmployeeId", "DateOfJoining", "Designation", "FullName", "Password", "Role" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2025, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), "Manager", "manager1", "AQAAAAEAACcQAAAAEJz9k3v9+u5uT1r6zjvYJpQh5rJ8k1vQ==", "Manager" },
-                    { 2, new DateTime(2025, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), "Developer", "employee1", "AQAAAAEAACcQAAAAEJz9k3v9+u5uT1r6zjvYJpQh5rJ8k1vQ==", "Employee" },
-                    { 3, new DateTime(2025, 10, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), "Tester", "employee2", "AQAAAAEAACcQAAAAEJz9k3v9+u5uT1r6zjvYJpQh5rJ8k1vQ==", "Employee" }
                 });
 
             migrationBuilder.CreateIndex(

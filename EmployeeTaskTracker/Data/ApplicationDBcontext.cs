@@ -17,36 +17,12 @@ namespace EmployeeTaskTracker.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // ✅ Seed Manager and Employee users
-            modelBuilder.Entity<Employee>().HasData(
-                new Employee
-                {
-                    EmployeeId = 1,
-                    FullName = "manager1",
-                    Designation = "Manager",
-                    DateOfJoining = new DateTime(2025, 10, 16),
-                    Role = "Manager",
-                    Password = "AQAAAAEAACcQAAAAEJz9k3v9+u5uT1r6zjvYJpQh5rJ8k1vQ=="
-                },
-                new Employee
-                {
-                    EmployeeId = 2,
-                    FullName = "employee1",
-                    Designation = "Developer",
-                    DateOfJoining = new DateTime(2025, 10, 16),
-                    Role = "Employee",
-                    Password = "AQAAAAEAACcQAAAAEJz9k3v9+u5uT1r6zjvYJpQh5rJ8k1vQ=="
-                },
-                new Employee
-                {
-                    EmployeeId = 3,
-                    FullName = "employee2",
-                    Designation = "Tester",
-                    DateOfJoining = new DateTime(2025, 10, 16),
-                    Role = "Employee",
-                    Password = "AQAAAAEAACcQAAAAEJz9k3v9+u5uT1r6zjvYJpQh5rJ8k1vQ=="
-                }
-            );
+            
+            modelBuilder.Entity<TaskItem>()
+                .HasOne(t => t.Employee)
+                .WithMany(e => e.TaskItems)
+                .HasForeignKey(t => t.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

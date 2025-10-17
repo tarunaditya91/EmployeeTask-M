@@ -24,25 +24,28 @@ namespace EmployeeTaskTracker.Controllers
             _passwordHasher = new PasswordHasher<Employee>();
         }
 
-        //  Register endpoint
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] Employee employee)
         {
-            // Hash the password before saving
-            employee.Password = _passwordHasher.HashPassword(employee, employee.Password);
+            if (_context.Employees.Any(e => e.FullName == employee.FullName))
+                return BadRequest("User already exists");
+
+            // Hash the password (raw password is in PasswordHash property)
+            employee.PasswordHash = _passwordHasher.HashPassword(employee, employee.PasswordHash);
+
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
+
             return Ok("User registered successfully");
         }
 
-        //  Login endpoint
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginModel login)
         {
             var user = _context.Employees.FirstOrDefault(e => e.FullName == login.Username);
             if (user == null) return Unauthorized("Invalid credentials");
 
-            var result = _passwordHasher.VerifyHashedPassword(user, user.Password, login.Password);
+            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, login.Password);
             if (result == PasswordVerificationResult.Success)
             {
                 var token = GenerateJwtToken(user.FullName, user.Role);
@@ -56,6 +59,7 @@ namespace EmployeeTaskTracker.Controllers
         {
             var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]);
             var issuer = _config["Jwt:Issuer"];
+            var audience = _config["Jwt:Audience"];
 
             var claims = new[]
             {
@@ -68,7 +72,7 @@ namespace EmployeeTaskTracker.Controllers
 
             var tokenDescriptor = new JwtSecurityToken(
                 issuer,
-                issuer,
+                audience,
                 claims,
                 expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: credentials

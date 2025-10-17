@@ -17,49 +17,68 @@ namespace EmployeeTaskTracker.Controllers
             _context = context;
         }
 
-        // ✅ Manager only: View all employees
+        // ✅ Manager only: View all employees (hide PasswordHash)
         [Authorize(Roles = "Manager")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
+        public async Task<ActionResult<IEnumerable<object>>> GetEmployees()
         {
-            return await _context.Employees.ToListAsync();
+            var employees = await _context.Employees
+                .Select(e => new
+                {
+                    e.EmployeeId,
+                    e.FullName,
+                    e.Designation,
+                    e.DateOfJoining,
+                    e.Role,
+                    e.ManagerId
+                })
+                .ToListAsync();
+
+            return Ok(employees);
         }
 
         // ✅ Employee: View own profile
         [Authorize(Roles = "Employee")]
         [HttpGet("my-profile")]
-        public async Task<ActionResult<Employee>> GetMyProfile()
+        public async Task<ActionResult<object>> GetMyProfile()
         {
             var username = User.Identity?.Name;
-            var employee = await _context.Employees.FirstOrDefaultAsync(e => e.FullName == username);
+            var employee = await _context.Employees
+                .Where(e => e.FullName == username)
+                .Select(e => new
+                {
+                    e.EmployeeId,
+                    e.FullName,
+                    e.Designation,
+                    e.DateOfJoining,
+                    e.Role,
+                    e.ManagerId
+                })
+                .FirstOrDefaultAsync();
 
             if (employee == null)
                 return NotFound();
 
-            return employee;
+            return Ok(employee);
         }
 
-        // ✅ Manager only: Add employee
-        [Authorize(Roles = "Manager")]
-        [HttpPost]
-        public async Task<ActionResult<Employee>> CreateEmployee(Employee employee)
-        {
-            _context.Employees.Add(employee);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetEmployees), new { id = employee.EmployeeId }, employee);
-        }
-
-        // ✅ Manager only: Update employee
+        // ✅ Manager only: Update employee details (not password)
         [Authorize(Roles = "Manager")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployee(int id, Employee employee)
+        public async Task<IActionResult> UpdateEmployee(int id, Employee updatedEmployee)
         {
-            if (id != employee.EmployeeId)
-                return BadRequest();
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee == null)
+                return NotFound();
 
-            _context.Entry(employee).State = EntityState.Modified;
+            employee.FullName = updatedEmployee.FullName;
+            employee.Designation = updatedEmployee.Designation;
+            employee.DateOfJoining = updatedEmployee.DateOfJoining;
+            employee.Role = updatedEmployee.Role;
+            employee.ManagerId = updatedEmployee.ManagerId;
+
             await _context.SaveChangesAsync();
-            return NoContent();
+            return Ok("Employee updated successfully");
         }
 
         // ✅ Manager only: Delete employee
@@ -73,7 +92,7 @@ namespace EmployeeTaskTracker.Controllers
 
             _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();
-            return NoContent();
+            return Ok("Employee deleted successfully");
         }
     }
 }
